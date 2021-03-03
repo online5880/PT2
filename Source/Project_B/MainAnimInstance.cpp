@@ -1,0 +1,45 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "MainAnimInstance.h"
+#include "GameFramework/PawnMovementComponent.h"
+#include "Project_B/Main.h"
+
+UMainAnimInstance::UMainAnimInstance()
+{
+	MovementSpeed = 0.f;
+	bIsAir = false;
+}
+
+void UMainAnimInstance::NativeInitializeAnimation()
+{
+	if(Pawn == nullptr)
+	{
+		Pawn = TryGetPawnOwner();
+		if(Pawn)
+		{
+			Main = Cast<AMain>(Pawn);
+		}
+	}
+}
+
+void UMainAnimInstance::UpdateAnimationProperties()
+{
+	if(Pawn == nullptr)
+	{
+		Pawn = TryGetPawnOwner();
+	}
+	if(Pawn)
+	{
+		FVector Speed = Pawn->GetVelocity();
+		FVector LateralSpeed = FVector(Speed.X,Speed.Y,0.f);
+		MovementSpeed = LateralSpeed.Size();
+
+		bIsAir = Pawn->GetMovementComponent()->IsFalling();
+
+		if(Main==nullptr)
+		{
+			Main = Cast<AMain>(Pawn);
+		}
+	}
+}
